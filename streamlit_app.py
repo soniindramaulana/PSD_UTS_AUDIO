@@ -11,8 +11,6 @@ from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
 import streamlit as st
 from streamlit_option_menu import option_menu
-from IPython.display import Image
-import IPython
 import seaborn as sns
 import scipy.stats
 import os
