@@ -2,7 +2,6 @@
 import numpy as np
 import pandas as pd
 import pickle
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.neighbors import KNeighborsClassifier
@@ -11,8 +10,6 @@ from sklearn.decomposition import PCA
 from sklearn.model_selection import GridSearchCV
 import streamlit as st
 from streamlit_option_menu import option_menu
-import seaborn as sns
-import scipy.stats
 import os
 import librosa
 from scipy.stats import skew, kurtosis, mode, iqr
