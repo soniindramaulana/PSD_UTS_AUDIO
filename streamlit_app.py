@@ -268,169 +268,182 @@ if selected == "Reduksi Data X Grid Search":
 
 if selected == "Prediksi":
 
-  def calculate_statistics(audio_path):
-    x, sr = librosa.load(audio_path)
+    def calculate_statistics(audio_path):
+        x, sr = librosa.load(audio_path)
 
-    mean = np.mean(x)
-    std = np.std(x)
-    maxv = np.amax(x)
-    minv = np.amin(x)
-    median = np.median(x)
-    skewness = skew(x)
-    kurt = kurtosis(x)
-    q1 = np.quantile(x, 0.25)
-    q3 = np.quantile(x, 0.75)
-    mode_v = mode(x)[0]
-    iqr = q3 - q1
+        mean = np.mean(x)
+        std = np.std(x)
+        maxv = np.amax(x)
+        minv = np.amin(x)
+        median = np.median(x)
+        skewness = skew(x)
+        kurt = kurtosis(x)
+        q1 = np.quantile(x, 0.25)
+        q3 = np.quantile(x, 0.75)
+        
+        # PERBAIKAN WARNING: Tambahkan keepdims=True dan ambil [0][0] untuk scalar
+        mode_v = mode(x, keepdims=True)[0][0] 
+        
+        iqr = q3 - q1
 
-    zcr = librosa.feature.zero_crossing_rate(x)[0]
-    mean_zcr = np.mean(zcr)
-    median_zcr = np.median(zcr)
-    std_zcr = np.std(zcr)
-    kurtosis_zcr = kurtosis(zcr, axis=None)
-    skew_zcr = skew(zcr, axis=None)
+        zcr = librosa.feature.zero_crossing_rate(x)[0]
+        mean_zcr = np.mean(zcr)
+        median_zcr = np.median(zcr)
+        std_zcr = np.std(zcr)
+        kurtosis_zcr = kurtosis(zcr, axis=None)
+        skew_zcr = skew(zcr, axis=None)
 
-    rms_energy = librosa.feature.rms(y=x)[0]
-    mean_rms = np.mean(rms_energy)
-    median_rms = np.median(rms_energy)
-    std_rms = np.std(rms_energy)
-    kurtosis_rms = kurtosis(rms_energy, axis=None)
-    skew_rms = skew(rms_energy, axis=None)
+        rms_energy = librosa.feature.rms(y=x)[0]
+        mean_rms = np.mean(rms_energy)
+        median_rms = np.median(rms_energy)
+        std_rms = np.std(rms_energy)
+        kurtosis_rms = kurtosis(rms_energy, axis=None)
+        skew_rms = skew(rms_energy, axis=None)
 
-    return [
-        mean, median, mode_v, maxv, minv, std, skewness, kurt, q1, q3, iqr,
-        mean_zcr, median_zcr, std_zcr, kurtosis_zcr, skew_zcr,
-        mean_rms, median_rms, std_rms, kurtosis_rms, skew_rms
-    ]
-  uploaded_file = st.file_uploader("Pilih file audio...", type=["wav","mp3"])
-
-
-
-  if uploaded_file is not None:
-    st.audio(uploaded_file, format="audio/wav")
-
-
-    st.title("Prediksi Class Data Audio Menggunakan MinMax")
-    if st.button("Cek Nilai Statistik"):
-        # Simpan file audio yang diunggah
-        audio_path = "audio_diunggah.wav"
-        with open(audio_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-
-        # Hitung statistik untuk file audio yang diunggah
-        statistik = calculate_statistics(audio_path)
-
-        results = []
-        result = {
-            'Mean Audio': audio_features[0],
-            'Median Audio': audio_features[1],
-            'Mode Audio': audio_features[2],
-            'Maxv Audio': audio_features[3],
-            'Minv Audio': audio_features[4],
-            'Std Audio': audio_features[5],
-            'Skew Audio': audio_features[6],
-            'Kurtosis Audio': audio_features[7],
-            'Q1 Audio': audio_features[8],
-            'Q3 Audio': audio_features[9],
-            'IQR Audio': audio_features[10],
-            'Mean ZCR': audio_features[11],
-            'Median ZCR': audio_features[12],
-            'Std ZCR': audio_features[13],
-            'Kurtosis ZCR': audio_features[14],
-            'Skew ZCR': audio_features[15],
-            'Mean Energy RMSE': audio_features[16],
-            'Median Energy RMSE': audio_features[17],
-            'Kurtosis Energy RMSE': audio_features[19], 
-            'Std Energy RMSE': audio_features[18],     
-            'Skew Energy RMSE': audio_features[20],
-        }
-        results.append(result)
-        df = pd.DataFrame(results)
-        st.write(df)
-
-        # Hapus file audio yang diunggah
-        os.remove(audio_path)
-
-    if st.button("Deteksi Audio"):
-
-        # Memuat data audio yang diunggah dan menyimpannya sebagai file audio
-        audio_path = "audio_diunggah.wav"
-        with open(audio_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
-
-        # Menghitung statistik untuk file audio yang diunggah (gunakan fungsi calculate_statistics sesuai kebutuhan)
-        audio_features = calculate_statistics(audio_path)
-        results = []
-        result = {
-            'Mean Audio': audio_features[0],
-            'Median Audio': audio_features[1],
-            'Mode Audio': audio_features[2],
-            'Maxv Audio': audio_features[3],
-            'Minv Audio': audio_features[4],
-            'Std Audio': audio_features[5],
-            'Skew Audio': audio_features[6],
-            'Kurtosis Audio': audio_features[7],
-            'Q1 Audio': audio_features[8],
-            'Q3 Audio': audio_features[9],
-            'IQR Audio': audio_features[10],
-            'Mean ZCR': audio_features[11],
-            'Median ZCR': audio_features[12],
-            'Std ZCR': audio_features[13],
-            'Kurtosis ZCR': audio_features[14],
-            'Skew ZCR': audio_features[15],
-            'Mean Energy RMSE': audio_features[16],
-            'Median Energy RMSE': audio_features[17],
-            'Kurtosis Energy RMSE': audio_features[19], 
-            'Std Energy RMSE': audio_features[18],     
-            'Skew Energy RMSE': audio_features[20],
-        }
-        results.append(result)
-        data_tes = pd.DataFrame(results)
+        # Pastikan urutan return sesuai dengan dictionary 'result'
+        return [
+            mean, median, mode_v, maxv, minv, std, skewness, kurt, q1, q3, iqr,
+            mean_zcr, median_zcr, std_zcr, kurtosis_zcr, skew_zcr,
+            mean_rms, median_rms, std_rms, kurtosis_rms, skew_rms
+        ]
+        
+    uploaded_file = st.file_uploader("Pilih file audio...", type=["wav","mp3"])
 
 
-        # Load the model and hyperparameters
-        with open('minmaxgridsearchhmodel.pkl', 'rb') as model_file:
-            saved_data = pickle.load(model_file)
+    if uploaded_file is not None:
+        st.audio(uploaded_file, format="audio/wav")
 
-        df = pd.read_csv('hasil_statistik.csv')
+        st.title("Prediksi Class Data Audio Menggunakan MinMax")
+        
+        if st.button("Cek Nilai Statistik"):
+            # Simpan file audio yang diunggah
+            audio_path = "audio_diunggah.wav"
+            with open(audio_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
 
-        # Memisahkan kolom target (label) dari kolom fitur
-        X = df.drop(columns=['Label'])  # Kolom fitur
-        y = df['Label']  # Kolom target
+            # Hitung statistik untuk file audio yang diunggah
+            # PERBAIKAN BUG: ganti 'audio_features' menjadi 'statistik'
+            statistik = calculate_statistics(audio_path)
 
-        # Normalisasi data menggunakan StandardScaler
-        minmaxscaler = pickle.load(open('minmaxscaler.pkl','rb'))
-        X_scaled = minmaxscaler.fit_transform(X)
+            results = []
+            
+            # PERBAIKAN NAMA KOLOM: Samakan persis dengan CSV
+            result = {
+                'Mean Audio': statistik[0],
+                'Median Audio': statistik[1],
+                'Mode Audio': statistik[2],
+                'Maxv Audio': statistik[3],
+                'Minv Audio': statistik[4],
+                'Std Audio': statistik[5],
+                'Skew Audio': statistik[6],
+                'Kurtosis Audio': statistik[7],
+                'Q1 Audio': statistik[8],
+                'Q3 Audio': statistik[9],
+                'IQR Audio': statistik[10],
+                'Mean ZCR': statistik[11],
+                'Median ZCR': statistik[12],
+                'Std ZCR': statistik[13],
+                'Kurtosis ZCR': statistik[14],
+                'Skew ZCR': statistik[15],
+                'Mean Energy RMSE': statistik[16],
+                'Median Energy RMSE': statistik[17],
+                'Std Energy RMSE': statistik[18],      # Indeks 18
+                'Kurtosis Energy RMSE': statistik[19],  # Indeks 19
+                'Skew Energy RMSE': statistik[20],
+            }
+            results.append(result)
+            df = pd.DataFrame(results)
+            st.write(df)
 
-        # Memisahkan data menjadi data latih dan data uji
-        X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+            # Hapus file audio yang diunggah
+            os.remove(audio_path)
 
-        # Access hyperparameters
-        best_n_neighbors = saved_data['hyperparameters']['best_n_neighbors']
-        best_weights = saved_data['hyperparameters']['best_weights']
-        best_metric = saved_data['hyperparameters']['best_metric']
-        best_comp = saved_data['hyperparameters']['best_comp']
+        if st.button("Deteksi Audio"):
 
-        # Melakukan PCA pada data audio yang diunggah
-        pca = PCA(n_components=best_comp)
+            # Memuat data audio yang diunggah dan menyimpannya sebagai file audio
+            audio_path = "audio_diunggah.wav"
+            with open(audio_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
 
-        # Memanggil metode fit dengan data pelatihan sebelum menggunakan transform
-        X_test_minmax = minmaxscaler.transform(data_tes)
+            # Menghitung statistik untuk file audio yang diunggah
+            audio_features = calculate_statistics(audio_path)
+            results = []
+            
+            # PERBAIKAN NAMA KOLOM: Samakan persis dengan CSV
+            result = {
+                'Mean Audio': audio_features[0],
+                'Median Audio': audio_features[1],
+                'Mode Audio': audio_features[2],
+                'Maxv Audio': audio_features[3],
+                'Minv Audio': audio_features[4],
+                'Std Audio': audio_features[5],
+                'Skew Audio': audio_features[6],
+                'Kurtosis Audio': audio_features[7],
+                'Q1 Audio': audio_features[8],
+                'Q3 Audio': audio_features[9],
+                'IQR Audio': audio_features[10],
+                'Mean ZCR': audio_features[11],
+                'Median ZCR': audio_features[12],
+                'Std ZCR': audio_features[13],
+                'Kurtosis ZCR': audio_features[14],
+                'Skew ZCR': audio_features[15],
+                'Mean Energy RMSE': audio_features[16],
+                'Median Energy RMSE': audio_features[17],
+                'Std Energy RMSE': audio_features[18],      # Indeks 18
+                'Kurtosis Energy RMSE': audio_features[19],  # Indeks 19
+                'Skew Energy RMSE': audio_features[20],
+            }
+            results.append(result)
+            data_tes = pd.DataFrame(results) # data_tes sekarang punya nama kolom yang BENAR
 
-        X_train_pca = pca.fit_transform(X_train)
-        X_test_pca = pca.transform(X_test_minmax)
 
-        # Membuat model KNN dengan hyperparameter terbaik
-        best_knn_model = KNeighborsClassifier(n_neighbors=best_n_neighbors, weights=best_weights, metric=best_metric)
-        best_knn_model.fit(X_train_pca, y_train)
+            # Load the model and hyperparameters
+            with open('minmaxgridsearchhmodel.pkl', 'rb') as model_file:
+                saved_data = pickle.load(model_file)
 
-        predicted_label = best_knn_model.predict(X_test_pca)
+            df = pd.read_csv('hasil_statistik.csv')
 
-        # Menampilkan hasil prediksi
-        st.write("Emosi Terdeteksi:", predicted_label)
+            # Memisahkan kolom target (label) dari kolom fitur
+            X = df.drop(columns=['Label'])  # Kolom fitur
+            y = df['Label']  # Kolom target
+
+            # Normalisasi data menggunakan StandardScaler
+            minmaxscaler = pickle.load(open('minmaxscaler.pkl','rb'))
+            
+            # Scaler di-fit ulang ke X (yang punya nama kolom BENAR)
+            X_scaled = minmaxscaler.fit_transform(X) 
+
+            # Memisahkan data menjadi data latih dan data uji
+            X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+            # Access hyperparameters
+            best_n_neighbors = saved_data['hyperparameters']['best_n_neighbors']
+            best_weights = saved_data['hyperparameters']['best_weights']
+            best_metric = saved_data['hyperparameters']['best_metric']
+            best_comp = saved_data['hyperparameters']['best_comp']
+
+            # Melakukan PCA pada data audio yang diunggah
+            pca = PCA(n_components=best_comp)
+
+            # Baris ini sekarang akan SUKSES karena:
+            # 1. 'minmaxscaler' di-fit pada X (nama kolom: 'Mean Audio', 'IQR Audio')
+            # 2. 'data_tes' juga punya nama kolom: 'Mean Audio', 'IQR Audio'
+            X_test_minmax = minmaxscaler.transform(data_tes)
+
+            X_train_pca = pca.fit_transform(X_train)
+            X_test_pca = pca.transform(X_test_minmax)
+
+            # Membuat model KNN dengan hyperparameter terbaik
+            best_knn_model = KNeighborsClassifier(n_neighbors=best_n_neighbors, weights=best_weights, metric=best_metric)
+            best_knn_model.fit(X_train_pca, y_train)
+
+            predicted_label = best_knn_model.predict(X_test_pca)
+
+            # Menampilkan hasil prediksi
+            st.success(f"Emosi Terdeteksi: {predicted_label[0]}")
 
 
-        # Menghapus file audio yang diunggah
-        os.remove(audio_path)
+            # Menghapus file audio yang diunggah
+            os.remove(audio_path)
 
 
