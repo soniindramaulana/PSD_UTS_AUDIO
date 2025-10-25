@@ -85,21 +85,8 @@ st.markdown("""
     .st-emotion-cache-q8sbsg {
         background-color: #e6f7ff; /* Biru sangat muda */
         border: 1px solid #007BFF;
+        color: black;
         border-radius: 10px;
-    }
-
-    /* ===============================================================
-    PERBAIKAN CSS: Mengubah warna teks pada label st.metric menjadi hitam
-    ===============================================================
-    */
-    div[data-testid="stMetricLabel"] {
-        color: black !important; /* Membuat teks label menjadi hitam */
-        /* Biarkan background, border, padding, border-radius sesuai default streamlit */
-    }
-    
-    /* Juga target teks p di dalamnya kalau ada (untuk kompatibilitas) */
-    div[data-testid="stMetricLabel"] p {
-        color: black !important; /* Membuat teks p di dalam label menjadi hitam */
     }
 
 </style>
@@ -491,5 +478,6 @@ if selected == "Prediksi":
                     predicted_label = best_knn_model.predict(X_test_pca)
                     
                     result_placeholder.metric("Hasil Deteksi Emosi", f"🔊 {predicted_label[0]} 🔊")
+
 
 
