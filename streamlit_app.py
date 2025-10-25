@@ -406,6 +406,16 @@ if selected == "Prediksi":
             # Memisahkan kolom target (label) dari kolom fitur
             X = df.drop(columns=['Label'])  # Kolom fitur
             y = df['Label']  # Kolom target
+            feature_columns_order = X.columns.tolist()
+  
+            # Paksa 'data_tes' untuk memiliki urutan kolom yang SAMA PERSIS
+            try:
+                data_tes = data_tes[feature_columns_order]
+            except KeyError as e:
+                st.error(f"Error: Nama kolom di 'result' dictionary masih ada yang salah ketik dan tidak cocok dengan CSV. Error: {e}")
+                # Hentikan eksekusi jika nama masih salah
+                os.remove(audio_path) 
+                st.stop()
 
             # Normalisasi data menggunakan StandardScaler
             minmaxscaler = pickle.load(open('minmaxscaler.pkl','rb'))
@@ -445,5 +455,6 @@ if selected == "Prediksi":
 
             # Menghapus file audio yang diunggah
             os.remove(audio_path)
+
 
 
