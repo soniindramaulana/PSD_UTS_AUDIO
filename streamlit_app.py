@@ -89,14 +89,30 @@ st.markdown("""
     }
 
     /* ===============================================================
-    PERBAIKAN CSS v2: Menghilangkan background biru pada label st.metric
+    PERBAIKAN CSS v3: Menghilangkan background biru pada label st.metric
     ===============================================================
     */
+    /* Menargetkan labelnya secara spesifik */
     div[data-testid="stMetricLabel"] {
-        background: none !important;
+        background: transparent !important;
         border: none !important;
         padding: 0 !important;
         border-radius: 0 !important;
+    }
+    
+    /* Menargetkan Teks di dalam label jika ada */
+    div[data-testid="stMetricLabel"] p {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+    }
+    
+    /* Menargetkan kelas auto-gen streamlit (jika v3 gagal) */
+    .st-emotion-cache-1g05m3k {
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
     }
 
 </style>
@@ -488,3 +504,4 @@ if selected == "Prediksi":
                     predicted_label = best_knn_model.predict(X_test_pca)
                     
                     result_placeholder.metric("Hasil Deteksi Emosi", f"🔊 {predicted_label[0]} 🔊")
+
