@@ -80,14 +80,6 @@ st.markdown("""
         color: #007BFF;
         font-weight: 600;
     }
-    
-    /* Kustomisasi st.info */
-    .st-emotion-cache-q8sbsg {
-        background-color: #e6f7ff; /* Biru sangat muda */
-        border: 1px solid #007BFF;
-        color: black;
-        border-radius: 10px;
-    }
 
 </style>
 """, unsafe_allow_html=True)
@@ -478,6 +470,7 @@ if selected == "Prediksi":
                     predicted_label = best_knn_model.predict(X_test_pca)
                     
                     result_placeholder.metric("Hasil Deteksi Emosi", f"🔊 {predicted_label[0]} 🔊")
+
 
 
 
