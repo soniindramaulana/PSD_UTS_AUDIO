@@ -412,7 +412,7 @@ if selected == "Prediksi":
         pca = PCA(n_components=best_comp)
 
         # Memanggil metode fit dengan data pelatihan sebelum menggunakan transform
-        X_test_minmax = minmaxscaler.fit_transform(data_tes)
+        X_test_minmax = minmaxscaler.transform(data_tes)
 
         X_train_pca = pca.fit_transform(X_train)
         X_test_pca = pca.transform(X_test_minmax)
@@ -429,3 +429,4 @@ if selected == "Prediksi":
 
         # Menghapus file audio yang diunggah
         os.remove(audio_path)
+
