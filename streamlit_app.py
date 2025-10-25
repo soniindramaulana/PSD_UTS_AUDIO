@@ -88,6 +88,16 @@ st.markdown("""
         border-radius: 10px;
     }
 
+    /* ===============================================================
+    PERBAIKAN CSS: Menghilangkan background biru pada label st.metric
+    ===============================================================
+    */
+    div[data-testid="stMetric"] label {
+        background-color: transparent !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+    }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -258,8 +268,10 @@ if selected == "Reduksi Data":
 
     akurasi_list2 = []
     
-    # Placeholder untuk log
-    log_container = st.container(height=300) # Buat container dengan tinggi tetap
+    # ==========================================================
+    # PERBAIKAN ERROR TypeError: Hapus st.container(height=300)
+    # ==========================================================
+    # log_container = st.container(height=300) # <-- HAPUS BARIS INI
     log_lines = []
 
     with st.spinner('Melakukan reduksi PCA dan pengujian KNN... Ini mungkin memakan waktu.'):
@@ -280,8 +292,14 @@ if selected == "Reduksi Data":
                 log_line = f"PCA={n_components:02d}, k={n_neighbors} | Akurasi: {akurasi:.4f}"
                 log_lines.append(log_line)
         
+        # ==========================================================
+        # PERBAIKAN ERROR TypeError: 
+        # Ganti log_container.code(...) menjadi st.code(...)
+        # ==========================================================
         # Tampilkan log di container
-        log_container.code('\n'.join(log_lines))
+        # log_container.code('\n'.join(log_lines)) # <-- GANTI BARIS INI
+        st.code('\n'.join(log_lines), height=300) # <-- MENJADI SEPERTI INI
+
 
     # Cari kombinasi n_components dan n_neighbors dengan akurasi tertinggi
     best_accuracy = max(akurasi_list2, key=lambda x: x[2])
