@@ -283,22 +283,25 @@ if selected == "Prediksi":
     mode_v = mode(x)[0]
     iqr = q3 - q1
 
-    zcr = librosa.feature.zero_crossing_rate(x)
+    zcr = librosa.feature.zero_crossing_rate(x)[0]
     mean_zcr = np.mean(zcr)
     median_zcr = np.median(zcr)
     std_zcr = np.std(zcr)
     kurtosis_zcr = kurtosis(zcr, axis=None)
     skew_zcr = skew(zcr, axis=None)
 
-    n = len(x)
-    mean_rms = np.sqrt(np.mean(x**2) / n)
-    median_rms = np.sqrt(np.median(x**2) / n)
-    skew_rms = np.sqrt(skew(x**2) / n)
-    kurtosis_rms = np.sqrt(kurtosis(x**2) / n)
-    std_rms = np.sqrt(np.std(x**2) / n)
+    rms_energy = librosa.feature.rms(y=x)[0]
+    mean_rms = np.mean(rms_energy)
+    median_rms = np.median(rms_energy)
+    std_rms = np.std(rms_energy)
+    kurtosis_rms = kurtosis(rms_energy, axis=None)
+    skew_rms = skew(rms_energy, axis=None)
 
-    return [mean, median, mode_v, maxv, minv, std, skewness, kurt, q1, q3, iqr, mean_zcr, median_zcr, std_zcr, kurtosis_zcr, skew_zcr, mean_rms, median_rms, std_rms, kurtosis_rms, skew_rms]
-
+    return [
+        mean, median, mode_v, maxv, minv, std, skewness, kurt, q1, q3, iqr,
+        mean_zcr, median_zcr, std_zcr, kurtosis_zcr, skew_zcr,
+        mean_rms, median_rms, std_rms, kurtosis_rms, skew_rms
+    ]
   uploaded_file = st.file_uploader("Pilih file audio...", type=["wav","mp3"])
 
 
@@ -319,27 +322,27 @@ if selected == "Prediksi":
 
         results = []
         result = {
-            'Audio Mean': statistik[0],
-            'Audio Median': statistik[1],
-            'Audio Mode': statistik[2],
-            'Audio Maxv': statistik[3],
-            'Audio Minv': statistik[4],
-            'Audio Std': statistik[5],
-            'Audio Skew': statistik[6],
-            'Audio Kurtosis': statistik[7],
-            'Audio Q1': statistik[8],
-            'Audio Q3': statistik[9],
-            'Audio IQR': statistik[10],
-            'ZCR Mean': statistik[11],
-            'ZCR Median': statistik[12],
-            'ZCR Std': statistik[13],
-            'ZCR Kurtosis': statistik[14],
-            'ZCR Skew': statistik[15],
-            'RMS Energi Mean': statistik[16],
-            'RMS Energi Median': statistik[17],
-            'RMS Energi Std': statistik[18],
-            'RMS Energi Kurtosis': statistik[19],
-            'RMS Energi Skew': statistik[20],
+            'Mean Audio': audio_features[0],
+            'Median Audio': audio_features[1],
+            'Mode Audio': audio_features[2],
+            'Maxv Audio': audio_features[3],
+            'Minv Audio': audio_features[4],
+            'Std Audio': audio_features[5],
+            'Skew Audio': audio_features[6],
+            'Kurtosis Audio': audio_features[7],
+            'Q1 Audio': audio_features[8],
+            'Q3 Audio': audio_features[9],
+            'IQR Audio': audio_features[10],
+            'Mean ZCR': audio_features[11],
+            'Median ZCR': audio_features[12],
+            'Std ZCR': audio_features[13],
+            'Kurtosis ZCR': audio_features[14],
+            'Skew ZCR': audio_features[15],
+            'Mean Energy RMSE': audio_features[16],
+            'Median Energy RMSE': audio_features[17],
+            'Kurtosis Energy RMSE': audio_features[19], 
+            'Std Energy RMSE': audio_features[18],     
+            'Skew Energy RMSE': audio_features[20],
         }
         results.append(result)
         df = pd.DataFrame(results)
@@ -359,27 +362,27 @@ if selected == "Prediksi":
         audio_features = calculate_statistics(audio_path)
         results = []
         result = {
-            'Audio Mean': audio_features[0],
-            'Audio Median': audio_features[1],
-            'Audio Mode': audio_features[2],
-            'Audio Maxv': audio_features[3],
-            'Audio Minv': audio_features[4],
-            'Audio Std': audio_features[5],
-            'Audio Skew': audio_features[6],
-            'Audio Kurtosis': audio_features[7],
-            'Audio Q1': audio_features[8],
-            'Audio Q3': audio_features[9],
-            'Audio IQR': audio_features[10],
-            'ZCR Mean': audio_features[11],
-            'ZCR Median': audio_features[12],
-            'ZCR Std': audio_features[13],
-            'ZCR Kurtosis': audio_features[14],
-            'ZCR Skew': audio_features[15],
-            'RMS Energi Mean': audio_features[16],
-            'RMS Energi Median': audio_features[17],
-            'RMS Energi Std': audio_features[18],
-            'RMS Energi Kurtosis': audio_features[19],
-            'RMS Energi Skew': audio_features[20],
+            'Mean Audio': audio_features[0],
+            'Median Audio': audio_features[1],
+            'Mode Audio': audio_features[2],
+            'Maxv Audio': audio_features[3],
+            'Minv Audio': audio_features[4],
+            'Std Audio': audio_features[5],
+            'Skew Audio': audio_features[6],
+            'Kurtosis Audio': audio_features[7],
+            'Q1 Audio': audio_features[8],
+            'Q3 Audio': audio_features[9],
+            'IQR Audio': audio_features[10],
+            'Mean ZCR': audio_features[11],
+            'Median ZCR': audio_features[12],
+            'Std ZCR': audio_features[13],
+            'Kurtosis ZCR': audio_features[14],
+            'Skew ZCR': audio_features[15],
+            'Mean Energy RMSE': audio_features[16],
+            'Median Energy RMSE': audio_features[17],
+            'Kurtosis Energy RMSE': audio_features[19], 
+            'Std Energy RMSE': audio_features[18],     
+            'Skew Energy RMSE': audio_features[20],
         }
         results.append(result)
         data_tes = pd.DataFrame(results)
@@ -429,4 +432,5 @@ if selected == "Prediksi":
 
         # Menghapus file audio yang diunggah
         os.remove(audio_path)
+
 
