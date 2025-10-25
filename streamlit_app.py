@@ -89,11 +89,12 @@ st.markdown("""
     }
 
     /* ===============================================================
-    PERBAIKAN CSS: Menghilangkan background biru pada label st.metric
+    PERBAIKAN CSS v2: Menghilangkan background biru pada label st.metric
     ===============================================================
     */
-    div[data-testid="stMetric"] label {
-        background-color: transparent !important;
+    div[data-testid="stMetricLabel"] {
+        background: none !important;
+        border: none !important;
         padding: 0 !important;
         border-radius: 0 !important;
     }
@@ -139,10 +140,8 @@ if selected == "Dataset":
     st.header("Eksplorasi Dataset")
     st.markdown("Dataset ini berisi **2800 data** audio yang telah diekstraksi menjadi **21 fitur** statistik, ZCR, dan RMSE.")
     
-    # Tampilkan dataframe dengan rapi
     st.dataframe(data, use_container_width=True)
     
-    # Gunakan 2 kolom untuk deskripsi
     col1, col2 = st.columns([1, 2])
     
     with col1:
@@ -153,7 +152,6 @@ if selected == "Dataset":
 
     with col2:
         st.subheader("Daftar Fitur")
-        # Gunakan expander agar tidak memakan tempat
         with st.expander("Klik untuk melihat 21 fitur yang digunakan"):
             st.code("""
 1. Mean Audio          12. Mean ZCR
@@ -173,10 +171,8 @@ if selected == "Split Data":
     st.header("Pembagian Data Training & Testing")
     st.markdown("Data dibagi menjadi 80% data training dan 20% data testing (`test_size=0.2`).")
 
-    # Membagi data menjadi data training dan data testing
     fitur_train, fitur_test, target_train, target_test = train_test_split(fitur, target, test_size = 0.2, random_state=42)
 
-    # Tampilkan hasil dalam 3 kolom
     col1, col2, col3 = st.columns(3)
     col1.metric("Total Data", f"{fitur.shape[0]}", "100%")
     col2.metric("Data Training", f"{fitur_train.shape[0]}", "80%")
@@ -188,15 +184,12 @@ if selected == "Normalisasi Data":
     st.header("Normalisasi Data dengan MinMax Scaler")
     st.markdown("Fitur-fitur numerik akan diskalakan ke rentang [0, 1] agar memiliki bobot yang setara.")
     
-    #membuat variabel untuk normalisasi menggunakan minmax
     fitur_train, fitur_test, target_train, target_test = train_test_split(fitur, target, test_size = 0.2, random_state=42)
 
     minmaxscaler = MinMaxScaler()
     minmaxscaler.fit(fitur_train)
 
-    # menyimpan model ke dalam file pickle
     pickle.dump(minmaxscaler, open('minmaxscaler.pkl','wb'))
-    
     minmaxscaler = pickle.load(open('minmaxscaler.pkl','rb'))
 
     minmax_training = minmaxscaler.transform(fitur_train)
@@ -204,7 +197,6 @@ if selected == "Normalisasi Data":
 
     st.success("Normalisasi MinMax berhasil di-fit pada data training dan disimpan ke `minmaxscaler.pkl`.")
 
-    # Tampilkan hasil normalisasi di dalam expander
     with st.expander("Lihat Hasil Normalisasi Data Training"):
         st.dataframe(pd.DataFrame(minmax_training, columns=fitur_train.columns), use_container_width=True)
         
@@ -224,7 +216,6 @@ if selected == "Hasil Akurasi":
     k_terbaik = []
     log_lines = []
     
-    # Placeholder untuk bar kemajuan
     progress_bar = st.progress(0, text="Memulai pencarian...")
 
     for i, k in enumerate(list(range(1, 51))):
@@ -241,19 +232,16 @@ if selected == "Hasil Akurasi":
         elif akurasi_knn == akurasi_tertinggi:
             k_terbaik.append(k)
         
-        # Update progress bar
         progress_bar.progress((i + 1) / 50, text=f"Menghitung akurasi untuk k={k}...")
 
-    progress_bar.empty() # Hapus progress bar setelah selesai
+    progress_bar.empty()
     
     st.success(f"Pencarian Selesai!")
     
-    # Tampilkan hasil terbaik di ATAS dengan st.metric
     st.metric(label="Akurasi KNN Tertinggi", 
               value=f"{akurasi_tertinggi * 100:.2f} %", 
               delta=f"Diperoleh pada k = {k_terbaik}")
 
-    # Tampilkan log di dalam expander yang rapi
     with st.expander("Lihat Log Perhitungan Lengkap"):
         st.code('\n'.join(log_lines))
 
@@ -267,11 +255,6 @@ if selected == "Reduksi Data":
     minmax_testing = minmaxscaler.transform(fitur_test)
 
     akurasi_list2 = []
-    
-    # ==========================================================
-    # PERBAIKAN ERROR TypeError: Hapus st.container(height=300)
-    # ==========================================================
-    # log_container = st.container(height=300) # <-- HAPUS BARIS INI
     log_lines = []
 
     with st.spinner('Melakukan reduksi PCA dan pengujian KNN... Ini mungkin memakan waktu.'):
@@ -294,14 +277,11 @@ if selected == "Reduksi Data":
         
         # ==========================================================
         # PERBAIKAN ERROR TypeError: 
-        # Ganti log_container.code(...) menjadi st.code(...)
+        # Menghapus argumen 'height' dari st.code()
         # ==========================================================
-        # Tampilkan log di container
-        # log_container.code('\n'.join(log_lines)) # <-- GANTI BARIS INI
-        st.code('\n'.join(log_lines), height=300) # <-- MENJADI SEPERTI INI
+        st.code('\n'.join(log_lines)) # <-- Hapus ', height=300'
 
 
-    # Cari kombinasi n_components dan n_neighbors dengan akurasi tertinggi
     best_accuracy = max(akurasi_list2, key=lambda x: x[2])
     
     st.success(f"Pencarian Selesai!")
@@ -375,7 +355,6 @@ if selected == "Reduksi Data X Grid Search":
     with st.expander("Lihat Log Pencarian PCA"):
         st.code('\n'.join(log_lines_pca))
 
-    # Menyimpan model
     hyperparameters = {
         'best_n_neighbors': best_n_neighbors,
         'best_weights': best_weights,
@@ -395,10 +374,8 @@ if selected == "Prediksi":
     st.header("Prediksi Emosi Audio 🎤")
     st.markdown("Unggah file audio `.wav` atau `.mp3` untuk mendeteksi emosi.")
     
-    # Fungsi kalkulasi (tetap sama)
     @st.cache_data
     def calculate_statistics(audio_buffer):
-        # Muat audio dari buffer
         x, sr = librosa.load(audio_buffer, sr=None)
         
         mean = np.mean(x)
@@ -433,16 +410,13 @@ if selected == "Prediksi":
             mean_rms, median_rms, std_rms, kurtosis_rms, skew_rms
         ]
 
-    # --- Area Upload ---
     uploaded_file = st.file_uploader("Pilih file audio...", type=["wav","mp3"], label_visibility="collapsed")
     
-    # Placeholder untuk hasil
     result_placeholder = st.empty()
 
     if uploaded_file is not None:
         st.audio(uploaded_file, format=f'audio/{uploaded_file.type.split("/")[1]}')
         
-        # --- Tombol Aksi ---
         col1, col2 = st.columns([1, 1])
 
         with col1:
@@ -459,7 +433,7 @@ if selected == "Prediksi":
                         'Median Energy RMSE': statistik[17], 'Std Energy RMSE': statistik[18],
                         'Kurtosis Energy RMSE': statistik[19], 'Skew Energy RMSE': statistik[20],
                     }
-                    df = pd.DataFrame([result]) # Buat jadi list of dict
+                    df = pd.DataFrame([result])
                 
                 result_placeholder.subheader("Hasil Ekstraksi Fitur Audio")
                 result_placeholder.dataframe(df, use_container_width=True)
@@ -467,7 +441,6 @@ if selected == "Prediksi":
         with col2:
             if st.button("Deteksi Audio"):
                 with st.spinner('Menganalisis dan memprediksi emosi...'):
-                    # 1. Ekstraksi Fitur
                     audio_features = calculate_statistics(uploaded_file)
                     result = {
                         'Mean Audio': audio_features[0], 'Median Audio': audio_features[1], 'Mode Audio': audio_features[2],
@@ -479,9 +452,8 @@ if selected == "Prediksi":
                         'Median Energy RMSE': audio_features[17], 'Std Energy RMSE': audio_features[18],
                         'Kurtosis Energy RMSE': audio_features[19], 'Skew Energy RMSE': audio_features[20],
                     }
-                    data_tes = pd.DataFrame([result]) # Buat jadi list of dict
+                    data_tes = pd.DataFrame([result])
 
-                    # 2. Load Model & Data Training
                     with open('minmaxgridsearchhmodel.pkl', 'rb') as model_file:
                         saved_data = pickle.load(model_file)
                     
@@ -489,37 +461,30 @@ if selected == "Prediksi":
                     X = df.drop(columns=['Label'])
                     y = df['Label']
                     
-                    # Ambil urutan kolom yang benar
                     feature_columns_order = X.columns.tolist()
-                    data_tes = data_tes[feature_columns_order] # Paksa urutan kolom
+                    data_tes = data_tes[feature_columns_order]
 
                     minmaxscaler = pickle.load(open('minmaxscaler.pkl','rb'))
-                    X_scaled = minmaxscaler.fit_transform(X) # Fit scaler pada SEMUA data X
+                    X_scaled = minmaxscaler.fit_transform(X)
                     
-                    X_train = saved_data['X_train'] # Gunakan X_train dari model
-                    y_train = saved_data['y_train'] # Gunakan y_train dari model
+                    X_train = saved_data['X_train']
+                    y_train = saved_data['y_train']
 
-                    # 3. Access Hyperparameters
                     hyperparameters = saved_data['hyperparameters']
                     best_n_neighbors = hyperparameters['best_n_neighbors']
                     best_weights = hyperparameters['best_weights']
                     best_metric = hyperparameters['best_metric']
                     best_comp = hyperparameters['best_comp']
 
-                    # 4. Transformasi Data Uji
                     pca = PCA(n_components=best_comp)
                     
-                    # Gunakan scaler yang sudah di-fit pada X
                     X_test_minmax = minmaxscaler.transform(data_tes) 
 
                     X_train_pca = pca.fit_transform(X_train)
                     X_test_pca = pca.transform(X_test_minmax)
 
-                    # 5. Prediksi
                     best_knn_model = KNeighborsClassifier(n_neighbors=best_n_neighbors, weights=best_weights, metric=best_metric)
                     best_knn_model.fit(X_train_pca, y_train)
                     predicted_label = best_knn_model.predict(X_test_pca)
                     
-                    # 6. Tampilkan Hasil
-                    # Gunakan st.metric untuk tampilan hasil yang keren
                     result_placeholder.metric("Hasil Deteksi Emosi", f"🔊 {predicted_label[0]} 🔊")
